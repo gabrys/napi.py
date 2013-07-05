@@ -1,13 +1,11 @@
 #!/usr/bin/python
-# script downloads subtitles from napiprojekt
 #
-# reversed napi 0.16.3.1
+# Script downloads subtitles from napiprojekt
 #
+# based on older script
 # by gim,krzynio,dosiu,hash 2oo8.
 # last modified: 6-I-2oo8
 # 4pc0h f0rc3
-#
-# do dzialania potrzebny jest p7zip-full (tak sie nazywa paczka w debianie)
 
 import md5, sys, urllib, os
 
