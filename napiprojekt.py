@@ -16,6 +16,12 @@ import hashlib
 from tempfile import NamedTemporaryFile
 from subprocess import Popen, PIPE
 
+EXIT_CODE_WRONG_ARG_NUMBER = 1
+EXIT_CODE_LACK_OF_7Z_ON_PATH = 4
+EXIT_CODE_FAILED = 8
+
+TMP_FILE_SUFFIX = ".7z"
+TMP_FILE_PREFIX = "un7zip"
 SIZE_10_MBs_IN_BYTES = 10485760
 NAPI_ARCHIVE_PASSWORD = "iBlm8NTigvru0Jr0"
 
@@ -38,8 +44,7 @@ def f(z):
     return "".join(b)
 
 
-def build_url(movie_path):
-    movie_hash = calc_movie_hash_as_hex(movie_path)
+def build_url(movie_hash):
     url = "http://napiprojekt.pl/unit_napisy/dl.php?l=PL&f={}&t={}&v=other&kolejka=false&nick=&pass=&napios={}".format(
         movie_hash, f(movie_hash), os.name)
     return url
@@ -55,8 +60,8 @@ class Un7ZipError(Exception):
     pass
 
 
-def un7zip(archive, password=None, tmp_file_prefix="un7zip", tmp_file_suffix=".7z"):
-    tmp_file = NamedTemporaryFile(prefix=tmp_file_prefix, suffix=tmp_file_suffix)
+def un7zip(archive, password=None):
+    tmp_file = NamedTemporaryFile(prefix=TMP_FILE_PREFIX, suffix=TMP_FILE_SUFFIX)
     tmp_file.write(archive)
     tmp_file.flush()
 
@@ -76,7 +81,7 @@ def un7zip(archive, password=None, tmp_file_prefix="un7zip", tmp_file_suffix=".7
     return content
 
 
-def get_path_for_subtitle(movie_path):
+def get_target_path_for_subtitle(movie_path):
     filename, extension = os.path.splitext(movie_path)
     return filename + ".txt"
 
@@ -85,47 +90,45 @@ class NoMatchingSubtitle(Exception):
     pass
 
 
-def download_subtitle(movie_path):
-    napi_url = build_url(movie_path)
-    content_7z = request.urlopen(napi_url).read()
+def un7zip_api_response(content_7z):
     try:
         content = un7zip(content_7z, password=NAPI_ARCHIVE_PASSWORD)
     except Un7ZipError:
         raise NoMatchingSubtitle("No matching subtitle")
+    return content
 
-    # Don't override the same subtitles
-    try:
-        same = open(get_path_for_subtitle(movie_path), "rb").read() == content
-    except IOError:
-        same = False
 
-    if not same:
-        open(get_path_for_subtitle(movie_path), "wb").write(content)
+def download_subtitle(movie_path):
+    movie_hash = calc_movie_hash_as_hex(movie_path)
+    napi_subs_dl_url = build_url(movie_hash)
+    content_7z = request.urlopen(napi_subs_dl_url).read()
+    sub_content = un7zip_api_response(content_7z)
+    open(get_target_path_for_subtitle(movie_path), "wb").write(sub_content)
 
 
 def main():
     if len(sys.argv) < 2:
         print("\nUSAGE:\n\t" + sys.argv[0] + " moviefile [moviefile, ...]\n\n")
-        exit(1)
+        exit(EXIT_CODE_WRONG_ARG_NUMBER)
 
-    failed = False
+    any_failure = False
     try:
-        for movie_path in sys.argv[1:]:
+        for index, movie_path in enumerate(sys.argv[1:]):
+            print("{} / {} | Downloading subtitles for {} ...".format(index + 1, len(sys.argv[1:]), movie_path))
             try:
                 download_subtitle(movie_path)
-                print("OK " + movie_path)
+                print("Success!")
             except NoMatchingSubtitle:
-                failed = True
-                print("No subtitles for: " + movie_path)
+                any_failure = True
+                print("No subtitles found!")
             except IOError:
-                print("Cannot read file " + movie_path + "\n")
-                exit(2)
+                print("Cannot read movie file!")
     except OSError:
         print("OS error. Is 7z in PATH?")
-        exit(4)
+        exit(EXIT_CODE_LACK_OF_7Z_ON_PATH)
 
-    if failed:
-        exit(8)
+    if any_failure:
+        exit(EXIT_CODE_FAILED)
 
 
 if __name__ == "__main__":
