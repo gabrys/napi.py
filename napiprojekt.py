@@ -16,6 +16,9 @@ import hashlib
 from tempfile import NamedTemporaryFile
 from subprocess import Popen, PIPE
 
+SIZE_10_MBs_IN_BYTES = 10485760
+NAPI_ARCHIVE_PASSWORD = "iBlm8NTigvru0Jr0"
+
 
 def f(z):
     idx = [0xe, 0x3, 0x6, 0x8, 0x2]
@@ -35,29 +38,32 @@ def f(z):
     return "".join(b)
 
 
-def napiurl(path):
-    d = hashlib.md5()
-    d.update(open(path, mode='rb').read(10485760))
-    h = d.hexdigest()
+def build_url(movie_path):
+    movie_hash = calc_movie_hash_as_hex(movie_path)
+    url = "http://napiprojekt.pl/unit_napisy/dl.php?l=PL&f={}&t={}&v=other&kolejka=false&nick=&pass=&napios={}".format(
+        movie_hash, f(movie_hash), os.name)
+    return url
 
-    return "http://napiprojekt.pl/unit_napisy/dl.php?l=PL&" + \
-           "f=" + h + "&t=" + f(h) + \
-           "&v=other&kolejka=false&nick=&pass=&napios=" + os.name
+
+def calc_movie_hash_as_hex(movie_path):
+    md5_hash_gen = hashlib.md5()
+    md5_hash_gen.update(open(movie_path, mode='rb').read(SIZE_10_MBs_IN_BYTES))
+    return md5_hash_gen.hexdigest()
 
 
 class Un7ZipError(Exception):
     pass
 
 
-def un7zip(archive, password=None, tmpfileprefix="un7zip", tmpfilesuffix=".7z"):
-    tmpfile = NamedTemporaryFile(prefix=tmpfileprefix, suffix=tmpfilesuffix)
-    tmpfile.write(archive)
-    tmpfile.flush()
+def un7zip(archive, password=None, tmp_file_prefix="un7zip", tmp_file_suffix=".7z"):
+    tmp_file = NamedTemporaryFile(prefix=tmp_file_prefix, suffix=tmp_file_suffix)
+    tmp_file.write(archive)
+    tmp_file.flush()
 
     cmd = ["7z", "x", "-y", "-so"]
     if password is not None:
         cmd += ["-p" + password]
-    cmd += [tmpfile.name]
+    cmd += [tmp_file.name]
 
     sp = Popen(cmd, stdout=PIPE, stderr=PIPE)
 
@@ -66,12 +72,12 @@ def un7zip(archive, password=None, tmpfileprefix="un7zip", tmpfilesuffix=".7z"):
     if sp.wait() != 0:
         raise Un7ZipError("Invalid archive")
 
-    tmpfile.close()  # deletes the file
+    tmp_file.close()  # deletes the file
     return content
 
 
-def subtitlepath(moviepath):
-    filename, fileext = os.path.splitext(moviepath)
+def get_path_for_subtitle(movie_path):
+    filename, extension = os.path.splitext(movie_path)
     return filename + ".txt"
 
 
@@ -79,22 +85,22 @@ class NoMatchingSubtitle(Exception):
     pass
 
 
-def download_subtitle(filename):
-    url = napiurl(filename)
-    content_7z = request.urlopen(url).read()
+def download_subtitle(movie_path):
+    napi_url = build_url(movie_path)
+    content_7z = request.urlopen(napi_url).read()
     try:
-        content = un7zip(content_7z, password="iBlm8NTigvru0Jr0")
+        content = un7zip(content_7z, password=NAPI_ARCHIVE_PASSWORD)
     except Un7ZipError:
         raise NoMatchingSubtitle("No matching subtitle")
 
     # Don't override the same subtitles
     try:
-        same = open(subtitlepath(filename), "rb").read() == content
+        same = open(get_path_for_subtitle(movie_path), "rb").read() == content
     except IOError:
         same = False
 
     if not same:
-        open(subtitlepath(filename), "wb").write(content)
+        open(get_path_for_subtitle(movie_path), "wb").write(content)
 
 
 def main():
@@ -104,15 +110,15 @@ def main():
 
     failed = False
     try:
-        for arg in sys.argv[1:]:
+        for movie_path in sys.argv[1:]:
             try:
-                download_subtitle(arg)
-                print("OK " + arg)
+                download_subtitle(movie_path)
+                print("OK " + movie_path)
             except NoMatchingSubtitle:
                 failed = True
-                print("NOSUBS " + arg)
+                print("No subtitles for: " + movie_path)
             except IOError:
-                print("Cannot read file " + arg + "\n")
+                print("Cannot read file " + movie_path + "\n")
                 exit(2)
     except OSError:
         print("OS error. Is 7z in PATH?")
