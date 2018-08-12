@@ -26,6 +26,14 @@ SIZE_10_MBs_IN_BYTES = 10485760
 NAPI_ARCHIVE_PASSWORD = "iBlm8NTigvru0Jr0"
 
 
+class Un7ZipError(Exception):
+    pass
+
+
+class NoMatchingSubtitle(Exception):
+    pass
+
+
 def f(z):
     idx = [0xe, 0x3, 0x6, 0x8, 0x2]
     mul = [2, 2, 5, 4, 3]
@@ -51,12 +59,10 @@ def build_url(movie_hash):
 
 def calc_movie_hash_as_hex(movie_path):
     md5_hash_gen = hashlib.md5()
-    md5_hash_gen.update(open(movie_path, mode='rb').read(SIZE_10_MBs_IN_BYTES))
+    with open(movie_path, mode='rb') as movie_file:
+        content_of_first_10mbs = movie_file.read(SIZE_10_MBs_IN_BYTES)
+    md5_hash_gen.update(content_of_first_10mbs)
     return md5_hash_gen.hexdigest()
-
-
-class Un7ZipError(Exception):
-    pass
 
 
 def un7zip(archive, password=None):
@@ -74,7 +80,7 @@ def un7zip(archive, password=None):
     content = sp.communicate()[0]
 
     if sp.wait() != 0:
-        raise Un7ZipError("Invalid archive")
+        raise Un7ZipError("Downloaded archive with subtitles is broken!")
 
     tmp_file.close()  # deletes the file
     return content
@@ -83,10 +89,6 @@ def un7zip(archive, password=None):
 def get_target_path_for_subtitle(movie_path):
     filename, extension = os.path.splitext(movie_path)
     return filename + ".txt"
-
-
-class NoMatchingSubtitle(Exception):
-    pass
 
 
 def un7zip_api_response(content_7z: bytes) -> bytes:
@@ -103,7 +105,8 @@ def download_subtitle(movie_path):
     content_7z = request.urlopen(napi_subs_dl_url).read()
     binary_content = un7zip_api_response(content_7z)
     encoded_content = encode_to_unicode(binary_content)
-    open(get_target_path_for_subtitle(movie_path), "w").write(encoded_content)
+    with open(get_target_path_for_subtitle(movie_path), "w") as subtitles_file:
+        subtitles_file.write(encoded_content)
 
 
 def encode_to_unicode(binary_content: bytes) -> str:
