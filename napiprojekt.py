@@ -89,7 +89,7 @@ class NoMatchingSubtitle(Exception):
     pass
 
 
-def un7zip_api_response(content_7z):
+def un7zip_api_response(content_7z: bytes) -> bytes:
     try:
         content = un7zip(content_7z, password=NAPI_ARCHIVE_PASSWORD)
     except Un7ZipError:
@@ -101,8 +101,13 @@ def download_subtitle(movie_path):
     movie_hash = calc_movie_hash_as_hex(movie_path)
     napi_subs_dl_url = build_url(movie_hash)
     content_7z = request.urlopen(napi_subs_dl_url).read()
-    sub_content = un7zip_api_response(content_7z)
-    open(get_target_path_for_subtitle(movie_path), "wb").write(sub_content)
+    binary_content = un7zip_api_response(content_7z)
+    encoded_content = encode_to_unicode(binary_content)
+    open(get_target_path_for_subtitle(movie_path), "w").write(encoded_content)
+
+
+def encode_to_unicode(binary_content: bytes) -> str:
+    return binary_content.decode("windows-1250")
 
 
 def main(args):

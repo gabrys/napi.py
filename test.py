@@ -1,7 +1,9 @@
 import os
 import unittest
 
-from napiprojekt import build_url, un7zip_api_response
+from napiprojekt import build_url, un7zip_api_response, encode_to_unicode
+
+COMPRESSED_SUBTITLES_FILE_NAME = 'DunkirkSubtitles.7zip'
 
 
 class NapiPyTest(unittest.TestCase):
@@ -13,9 +15,17 @@ class NapiPyTest(unittest.TestCase):
         self.assertEqual(expected_url, actual_url)
 
     def test_should_unpack_downloaded_7zip(self):
-        compressed_subtitles_file_name = 'DunkirkSubtitles.7zip'
-        with open(compressed_subtitles_file_name, 'rb') as input_file:
+        with open(COMPRESSED_SUBTITLES_FILE_NAME, 'rb') as input_file:
             compressed_content = input_file.read()
-        content = un7zip_api_response(compressed_content)
-        self.assertIn(b"GrupaHatak.pl", content)
-        print(content)
+        sub_bin_content = un7zip_api_response(compressed_content)
+        expected_phrase = b"GrupaHatak.pl"
+        self.assertIn(expected_phrase, sub_bin_content)
+
+    def test_should_encode_subtitles_correctly(self):
+        with open(COMPRESSED_SUBTITLES_FILE_NAME, 'rb') as input_file:
+            compressed_content = input_file.read()
+        sub_bin_content = un7zip_api_response(compressed_content)
+        sub_utf8_content = encode_to_unicode(sub_bin_content)
+        expected_phrases = ['Tłumaczenie', 'Dunkierką', 'Francuzów', 'Uwięzieni']
+        for expected_phrase in expected_phrases:
+            self.assertIn(expected_phrase, sub_utf8_content)
