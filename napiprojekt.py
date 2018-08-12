@@ -45,9 +45,8 @@ def f(z):
 
 
 def build_url(movie_hash):
-    url = "http://napiprojekt.pl/unit_napisy/dl.php?l=PL&f={}&t={}&v=other&kolejka=false&nick=&pass=&napios={}".format(
+    return "http://napiprojekt.pl/unit_napisy/dl.php?l=PL&f={}&t={}&v=other&kolejka=false&nick=&pass=&napios={}".format(
         movie_hash, f(movie_hash), os.name)
-    return url
 
 
 def calc_movie_hash_as_hex(movie_path):
@@ -106,30 +105,30 @@ def download_subtitle(movie_path):
     open(get_target_path_for_subtitle(movie_path), "wb").write(sub_content)
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("\nUSAGE:\n\t" + sys.argv[0] + " moviefile [moviefile, ...]\n\n")
+def main(args):
+    if len(args) < 1:
+        print("\nUSAGE:\n\tnapiprojekt.py moviefile [moviefile, ...]\n\n")
         exit(EXIT_CODE_WRONG_ARG_NUMBER)
 
     any_failure = False
     try:
-        for index, movie_path in enumerate(sys.argv[1:]):
-            print("{} / {} | Downloading subtitles for {} ...".format(index + 1, len(sys.argv[1:]), movie_path))
+        for index, movie_path in enumerate(args):
+            print("{}/{} | Downloading subtitles for {} ...".format(index + 1, len(args), movie_path))
             try:
                 download_subtitle(movie_path)
-                print("Success!")
+                print("{}/{} | Success!".format(index + 1, len(args)))
             except NoMatchingSubtitle:
                 any_failure = True
-                print("No subtitles found!")
+                print("{}/{} | No subtitles found!".format(index + 1, len(args)))
             except IOError:
-                print("Cannot read movie file!")
+                print("{}/{} | Cannot read movie file!".format(index + 1, len(args)))
     except OSError:
         print("OS error. Is 7z in PATH?")
         exit(EXIT_CODE_LACK_OF_7Z_ON_PATH)
-
     if any_failure:
         exit(EXIT_CODE_FAILED)
 
 
 if __name__ == "__main__":
-    main()
+    program_args = sys.argv[1:]
+    main(program_args)
