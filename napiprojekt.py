@@ -138,15 +138,6 @@ def main(args):
 
 
 if __name__ == "__main__":
-    # program_args = sys.argv[1:]
-    # main(program_args)
-    movie_hash = "e51029cc7d1d5b7e1cd443221bd4d1bc"
-    path = "/home/mat/Downloads/Come.And.See.1985.1080p.BluRay.x264.EAC3-SARTRE/pl.txt"
-
-    napi_subs_dl_url = build_url(movie_hash)
-    content_7z = request.urlopen(napi_subs_dl_url).read()
-    binary_content = un7zip_api_response(content_7z)
-    encoded_content = encode_to_unicode(binary_content)
-    with open(get_target_path_for_subtitle(path), "w") as subtitles_file:
-        subtitles_file.write(encoded_content)
+    program_args = sys.argv[1:]
+    main(program_args)
 
