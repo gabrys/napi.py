@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from napiprojekt import build_url, un7zip_api_response, encode_to_unicode
+from napi.main import build_url, un7zip_api_response, encode_to_unicode
 
 COMPRESSED_SUBTITLES_FILE_NAME = 'DunkirkSubtitles.7zip'
 
