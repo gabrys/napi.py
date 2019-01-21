@@ -1,64 +1,64 @@
-#!/usr/bin/python3
+import argparse
+import shutil
+import traceback
+from os import path
 
-import os
-import sys
-
-from napi.api import build_url, download
+from napi.api import download_for
+from napi.encoding import convert_subtitles_encoding
 from napi.hash import calc_movie_hash_as_hex
 from napi.read_7z import un7zip_api_response
+from napi.store_subs import store_subtitles
 
-EXIT_CODE_WRONG_ARG_NUMBER = 1
-EXIT_CODE_LACK_OF_7Z_ON_PATH = 4
-EXIT_CODE_FAILED = 8
+EXIT_CODE_OK = 0
+EXIT_CODE_WRONG_ARGS = 1
+EXIT_CODE_NO_SUCH_MOVIE = 2
+EXIT_CODE_LACK_OF_7Z_ON_PATH = 3
+EXIT_CODE_FAILED = 4
 
 
 class NoMatchingSubtitle(Exception):
     pass
 
 
-def get_target_path_for_subtitle(movie_path):
-    filename, extension = os.path.splitext(movie_path)
-    return filename + ".txt"
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(prog="napi-py", description='CLI for downloading subtitles from napiprojekt.pl')
+    parser.add_argument('movie_path', type=str, required=True, help='Path to movie file')
+    return parser.parse_args()
 
 
-def download_subtitle(movie_path):
-    movie_hash = calc_movie_hash_as_hex(movie_path)
-    napi_subs_dl_url = build_url(movie_hash)
-    content_7z = download(napi_subs_dl_url)
-    binary_content = un7zip_api_response(content_7z)
-    encoded_content = encode_to_unicode(binary_content)
-    with open(get_target_path_for_subtitle(movie_path), "w") as subtitles_file:
-        subtitles_file.write(encoded_content)
+def _is_7z_on_path(command: str = "7z") -> bool:
+    return shutil.which(command) is not None
 
 
-def encode_to_unicode(binary_content: bytes) -> str:
-    return binary_content.decode("windows-1250")
-
-
-def main(args):
-    if len(args) < 1:
-        print("\nUSAGE:\n\tmain.py moviefile [moviefile, ...]\n\n")
-        exit(EXIT_CODE_WRONG_ARG_NUMBER)
-
-    any_failure = False
-    try:
-        for index, movie_path in enumerate(args):
-            print("{}/{} | Downloading subtitles for {} ...".format(index + 1, len(args), movie_path))
+def main(movie_path: str) -> None:
+    movie_path = path.abspath(movie_path)
+    if path.exists(movie_path):
+        if _is_7z_on_path():
             try:
-                download_subtitle(movie_path)
-                print("{}/{} | Success!".format(index + 1, len(args)))
-            except NoMatchingSubtitle:
-                any_failure = True
-                print("{}/{} | No subtitles found!".format(index + 1, len(args)))
-            except IOError as e:
-                print("{}/{} | Cannot read movie file: {}".format(index + 1, len(args), e))
-    except OSError:
-        print("OS error. Is 7z in PATH?")
-        exit(EXIT_CODE_LACK_OF_7Z_ON_PATH)
-    if any_failure:
-        exit(EXIT_CODE_FAILED)
+                movie_hash = calc_movie_hash_as_hex(movie_path)
+                print("Downloading subtitles for movie: {} (hash: {})".format(path.basename(movie_path), movie_hash))
+                content_7z = download_for(movie_hash)
+                subtitles_as_bytes = un7zip_api_response(content_7z)
+                subtitles_as_target_bytes = convert_subtitles_encoding(subtitles_as_bytes)
+                subtitles_path = store_subtitles(subtitles_as_target_bytes, movie_path)
+                print("Success: stored subtitles at: {}".format(subtitles_path))
+            except Exception as e:
+                traceback.print_exc()
+                print("Error: ".format(e))
+                exit(EXIT_CODE_FAILED)
+        else:
+            print("Error: 7z seems to be unavailable on PATH!")
+            exit(EXIT_CODE_LACK_OF_7Z_ON_PATH)
+    else:
+        print("Error: no such file: {}".format(movie_path))
+        exit(EXIT_CODE_NO_SUCH_MOVIE)
 
 
-if __name__ == "__main__":
-    program_args = sys.argv[1:]
-    main(program_args)
+def cli_main():
+    try:
+        args = _parse_args()
+        main(args.movie_path)
+    except Exception as e:
+        print("Parameters error: {}".format(e))
+        exit(EXIT_CODE_WRONG_ARGS)
+    exit(EXIT_CODE_OK)

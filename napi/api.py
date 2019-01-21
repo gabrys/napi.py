@@ -2,7 +2,7 @@ import os
 from urllib import request
 
 
-def f(z):
+def _cipher(z):
     idx = [0xe, 0x3, 0x6, 0x8, 0x2]
     mul = [2, 2, 5, 4, 3]
     add = [0, 0xd, 0x10, 0xb, 0x5]
@@ -20,11 +20,11 @@ def f(z):
     return "".join(b)
 
 
-def build_url(movie_hash):
+def _build_url(movie_hash):
     return "http://napiprojekt.pl/unit_napisy/dl.php?l=PL&f={}&t={}&v=other&kolejka=false&nick=&pass=&napios={}".format(
-        movie_hash, f(movie_hash), os.name)
+        movie_hash, _cipher(movie_hash), os.name)
 
 
-def download(movie_hash: str) -> bytes:
-    the_url = build_url(movie_hash)
+def download_for(movie_hash: str) -> bytes:
+    the_url = _build_url(movie_hash)
     return request.urlopen(the_url).read()
