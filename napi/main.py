@@ -2,12 +2,13 @@ import argparse
 import shutil
 import traceback
 from os import path
+from typing import Optional
 
 from napi.api import download_for
 from napi.encoding import convert_subtitles_encoding
 from napi.hash import calc_movie_hash_as_hex
 from napi.read_7z import un7zip_api_response
-from napi.store_subs import store_subtitles
+from napi.store_subs import store_subtitles, get_target_path_for_subtitle
 
 EXIT_CODE_OK = 0
 EXIT_CODE_WRONG_ARGS = 1
@@ -22,7 +23,8 @@ class NoMatchingSubtitle(Exception):
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="napi-py", description='CLI for downloading subtitles from napiprojekt.pl')
-    parser.add_argument('movie_path', type=str, required=True, help='Path to movie file')
+    parser.add_argument('movie_path', type=str, help='Path to movie file')
+    parser.add_argument('--target', type=str, required=False, default=None, help='Path to store the subtitles in')
     return parser.parse_args()
 
 
@@ -30,18 +32,19 @@ def _is_7z_on_path(command: str = "7z") -> bool:
     return shutil.which(command) is not None
 
 
-def main(movie_path: str) -> None:
+def main(movie_path: str, subtitles_path: Optional[str] = None) -> None:
     movie_path = path.abspath(movie_path)
+    subtitles_path = path.abspath(subtitles_path or get_target_path_for_subtitle(movie_path))
     if path.exists(movie_path):
         if _is_7z_on_path():
             try:
                 movie_hash = calc_movie_hash_as_hex(movie_path)
-                print("Downloading subtitles for movie: {} (hash: {})".format(path.basename(movie_path), movie_hash))
+                print("Downloading for {} ({})".format(path.basename(movie_path), movie_hash))
                 content_7z = download_for(movie_hash)
                 subtitles_as_bytes = un7zip_api_response(content_7z)
-                subtitles_as_target_bytes = convert_subtitles_encoding(subtitles_as_bytes)
-                subtitles_path = store_subtitles(subtitles_as_target_bytes, movie_path)
-                print("Success: stored subtitles at: {}".format(subtitles_path))
+                src_enc, tgt_enc, subtitles_as_target_bytes = convert_subtitles_encoding(subtitles_as_bytes)
+                subtitles_path = store_subtitles(subtitles_path, subtitles_as_target_bytes)
+                print("Saved subs ({} -> {}) in {}".format(src_enc, tgt_enc, subtitles_path))
             except Exception as e:
                 traceback.print_exc()
                 print("Error: ".format(e))
