@@ -1,4 +1,4 @@
-# napi.py
+# napi.py [![Build Status](https://travis-ci.com/emkor/napi.py.svg?branch=master)](https://travis-ci.com/emkor/napi.py)
 Unix CLI script for downloading subtitles from napiprojekt.pl
 
 ## installation
