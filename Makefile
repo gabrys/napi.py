@@ -28,9 +28,4 @@ build:
 	@echo "---- Building package ---- "
 	@$(VENV_PY3) setup.py sdist bdist_wheel --python-tag py3 --dist-dir ./dist
 
-publish:
-	@echo "---- Pushing package to PyPI ---- "
-	@$(VENV_PY3) -m pip install --upgrade twine
-	@$(VENV_PY3) -m twine upload -u $PYPI_USER -p $PYPI_PASSWORD dist/*
-
 .PHONY: all config test build
