@@ -12,7 +12,7 @@ REQUIREMENTS_DEV = [
 
 setup(
     name="napi-py",
-    version="0.0.1",
+    version="0.0.2",
     description="CLI for downloading subtitles from napiprojekt.pl",
     author="Mateusz Korzeniowski",
     author_email="emkor93@gmail.com",
