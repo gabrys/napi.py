@@ -1,15 +1,15 @@
 # napi.py [![Build Status](https://travis-ci.com/emkor/napi.py.svg?branch=master)](https://travis-ci.com/emkor/napi.py)
-Unix CLI script for downloading subtitles from napiprojekt.pl
+CLI tool for downloading subtitles from napiprojekt.pl, fork of [gabrys/napi.py](https://github.com/gabrys/napi.py)
+
+## prerequisites
+- Python 3.6 or 3.7
+- `7z` available on PATH
 
 ## installation
-- prerequisites:
-    - Python 3.6 or newer
-    - `7z` available on PATH
-- clone repository, enter `napi.py` directory and run:
-    - `sudo pip install .` for system wide installation
+- `sudo pip install napi-py` for system wide installation
 
 ## usage as tool
-- execute in shell `napi-py MyMovie.mkv`
+- `napi-py ~/Downloads/MyMovie.mp4`
 
 ## usage as lib
 ```python

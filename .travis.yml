@@ -12,6 +12,11 @@ script:
   - make test
   - make build
 
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    make publish
+    fi
+
 notifications:
   email:
     on_success: never

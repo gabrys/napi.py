@@ -10,12 +10,17 @@ REQUIREMENTS_DEV = [
     "wheel>=0.32.3,<1.0.0"
 ]
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name="napi-py",
-    version="0.1.1",
-    description="CLI for downloading subtitles from napiprojekt.pl",
+    version="0.1.2",
+    description="CLI tool for downloading subtitles from napiprojekt.pl",
     author="Mateusz Korzeniowski",
     author_email="emkor93@gmail.com",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/emkor/napi.py",
     packages=find_packages(exclude=("test", "test.*")),
     install_requires=REQUIREMENTS,
@@ -27,5 +32,15 @@ setup(
         "console_scripts": [
             "napi-py = napi.main:cli_main"
         ]
-    }
+    },
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "Development Status :: 3 - Alpha",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: GNU Affero General Public License v3",
+        "Natural Language :: English",
+        "Operating System :: POSIX :: Linux",
+        "Topic :: Utilities"
+    ],
 )
