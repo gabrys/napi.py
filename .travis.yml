@@ -12,9 +12,7 @@ script:
   - make build
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    make publish
-    fi
+  - ./ci_publish.sh
 
 notifications:
   email:
