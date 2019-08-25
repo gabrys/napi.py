@@ -1,12 +1,17 @@
 # napi.py
 Unix CLI script for downloading subtitles from napiprojekt.pl
 
-## Installation
-- prerequisites: `python3` and `7z` available on PATH
-- `pip install napi-py`
+## installation
+- prerequisites:
+    - Python 3.6 or newer
+    - `7z` available on PATH
+- clone repository, enter `napi.py` directory and run:
+    - `sudo pip install .` for system wide installation
 
-## Usage
-- execute in Terminal `napi-py MyMovie.mkv` (or `napi-py MyMovie1.mkv MyMovie2.mkv` for multiple movies)
+## usage
+- execute in shell `napi-py MyMovie.mkv`
 
-## Notices
-- implemented encoding from `windows-1250` to unicode correctly, so english Windows and Linux should display diacritics (ś, ę, ł, ó etc.) in subtitles correctly
+## development
+- `make config` installs `venv` under `.venv/napi.py`
+- `make build` creates installable packages
+- `make test` runs unit tests
