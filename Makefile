@@ -2,12 +2,12 @@ config: venv-clean venv install
 all: test build
 
 PY3 = python3
-VENV = ~/.venv/napi.py
-VENV_PY3 = ~/.venv/napi.py/bin/python3
+VENV = .venv/napi.py
+VENV_PY3 = .venv/napi.py/bin/python3
 
 venv-clean:
 	@echo "---- Doing cleanup ----"
-	@mkdir -p ~/.venv
+	@mkdir -p .venv
 	@rm -rf $(VENV)
 
 venv:
@@ -22,7 +22,7 @@ install:
 test:
 	@echo "---- Testing ---- "
 	@$(VENV_PY3) -m mypy --ignore-missing-imports ./napi
-	@$(VENV_PY3) -m pytest -v --cov=./napi ./test
+	@$(VENV_PY3) -m pytest -v ./test
 
 build:
 	@echo "---- Building package ---- "

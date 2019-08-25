@@ -1,2 +1,9 @@
 *.iml
-.idea
+.idea/
+
+.venv/
+.mypy_cache/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
