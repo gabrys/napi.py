@@ -4,7 +4,7 @@ from os import path
 
 from napi.api import _build_url
 from napi.encoding import decode_subs
-from napi.main import un7zip_api_response
+from napi.read_7z import un7zip_api_response
 
 TEST_SUBS_7Z = 'test/resources/DunkirkSubtitles.7zip'
 

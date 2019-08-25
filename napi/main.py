@@ -6,11 +6,8 @@ import traceback
 from os import path
 from typing import Optional
 
-from napi.api import download_for
-from napi.encoding import decode_subs, encode_subs
-from napi.hash import calc_movie_hash_as_hex
-from napi.read_7z import un7zip_api_response
-from napi.store_subs import store_subtitles, get_target_path_for_subtitle
+from napi import NapiPy
+from napi.store_subs import get_target_path_for_subtitle
 
 EXIT_CODE_OK = 0
 EXIT_CODE_WRONG_ARGS = 1
@@ -46,14 +43,13 @@ def main(movie_path: str, subtitles_path: Optional[str] = None) -> None:
     if path.exists(movie_path):
         if _is_7z_on_path():
             try:
-                movie_hash = calc_movie_hash_as_hex(movie_path)
-                log.debug("Downloading for {} ({})".format(path.basename(movie_path), movie_hash))
-                content_7z = download_for(movie_hash)
-                subtitles_as_bytes = un7zip_api_response(content_7z)
-                src_enc, utf8_subs = decode_subs(subtitles_as_bytes)
-                tgt_enc, utf8_subs_bin = encode_subs(utf8_subs)
-                subtitles_path = store_subtitles(subtitles_path, utf8_subs_bin)
-                log.info("Saved subs ({} -> {}) in {}".format(src_enc, tgt_enc, subtitles_path))
+                napi_client = NapiPy()
+                movie_hash = napi_client.calc_hash(movie_path)
+                log.info("Downloading for {} ({})".format(path.basename(movie_path), movie_hash))
+                src_enc, tmp_file = napi_client.download_subs(movie_hash)
+                subs_path = napi_client.move_subs(tmp_file, subtitles_path) \
+                    if subtitles_path else napi_client.move_subs_to_movie(tmp_file, movie_path)
+                log.info("Saved subs ({}) in {}".format(src_enc, subs_path))
             except Exception as e:
                 traceback.print_exc()
                 log.error(e)
