@@ -1,0 +1,17 @@
+language: python
+cache: pip
+python:
+  - "3.6"
+  - "3.7"
+
+before_script:
+  - make config
+
+script:
+  - make test
+  - make build
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change
