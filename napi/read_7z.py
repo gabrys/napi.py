@@ -1,5 +1,6 @@
 from subprocess import Popen, PIPE
 from tempfile import NamedTemporaryFile
+from typing import Optional
 
 TMP_FILE_SUFFIX = ".7z"
 TMP_FILE_PREFIX = "un7zip"
@@ -31,5 +32,8 @@ def un7zip(archive, password=None):
     return content
 
 
-def un7zip_api_response(content_7z: bytes) -> bytes:
-    return un7zip(content_7z, password=NAPI_ARCHIVE_PASSWORD)
+def un7zip_api_response(content_7z: bytes) -> Optional[bytes]:
+    try:
+        return un7zip(content_7z, password=NAPI_ARCHIVE_PASSWORD)
+    except Un7ZipError:
+        return None

@@ -16,3 +16,10 @@ class NapiPyAcceptanceTest(unittest.TestCase):
         expected_phrases = ['źródło', 'władzę', 'Dziękuję', 'zgłębiają', 'ZWYCIĘŻĄ!']
         for expected_phrase in expected_phrases:
             self.assertIn(expected_phrase, subs)
+
+    def test_should_return_none_when_no_subtitles_for_movie(self):
+        movie_hash = '00000000000000000000000000000000'
+        napi = NapiPy()
+        src_enc, tmp_file = napi.download_subs(movie_hash)
+        self.assertIsNone(src_enc)
+        self.assertIsNone(tmp_file)

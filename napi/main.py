@@ -13,11 +13,12 @@ EXIT_CODE_OK = 0
 EXIT_CODE_WRONG_ARGS = 1
 EXIT_CODE_NO_SUCH_MOVIE = 2
 EXIT_CODE_LACK_OF_7Z_ON_PATH = 3
-EXIT_CODE_FAILED = 4
+EXIT_SUBS_NOT_FOUND = 4
+EXIT_CODE_FAILED = 5
 
 
 def setup_logger(level: int = logging.INFO) -> None:
-    logging.basicConfig(format='%(levelname)s | %(asctime)s UTC | %(message)s', level=level)
+    logging.basicConfig(format='%(asctime)s UTC | %(levelname)s | %(message)s', level=level)
     logging.Formatter.converter = time.gmtime
 
 
@@ -45,11 +46,15 @@ def main(movie_path: str, subtitles_path: Optional[str] = None) -> None:
             try:
                 napi_client = NapiPy()
                 movie_hash = napi_client.calc_hash(movie_path)
-                log.info("Downloading for {} ({})".format(path.basename(movie_path), movie_hash))
+                log.info("Downloading subs for {} ({})".format(path.basename(movie_path), movie_hash))
                 src_enc, tmp_file = napi_client.download_subs(movie_hash)
-                subs_path = napi_client.move_subs(tmp_file, subtitles_path) \
-                    if subtitles_path else napi_client.move_subs_to_movie(tmp_file, movie_path)
-                log.info("Saved subs ({}) in {}".format(src_enc, subs_path))
+                if src_enc is not None and tmp_file is not None:
+                    subs_path = napi_client.move_subs(tmp_file, subtitles_path) \
+                        if subtitles_path else napi_client.move_subs_to_movie(tmp_file, movie_path)
+                    log.info("Saved subs ({}) in {}".format(src_enc, subs_path))
+                else:
+                    log.error("Napiprojekt.pl does not have subtitles for this movie")
+                    exit(EXIT_SUBS_NOT_FOUND)
             except Exception as e:
                 traceback.print_exc()
                 log.error(e)
