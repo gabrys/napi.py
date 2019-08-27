@@ -19,7 +19,7 @@ movie_path = "~/Downloads/MyMovie.mp4"
 
 napi = NapiPy()
 movie_hash = napi.calc_hash(movie_path)
-source_encoding, tmp_file = napi.download_subs(movie_hash)
+source_encoding, target_encoding, tmp_file = napi.download_subs(movie_hash)
 subs_path = napi.move_subs_to_movie(tmp_file, movie_path)
 print(subs_path)
 ```
