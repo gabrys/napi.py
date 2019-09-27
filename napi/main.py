@@ -31,6 +31,8 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument('movie_path', type=str, help='Path to movie file')
     parser.add_argument('--target', type=str, required=False, default=None, help='Path to store the subtitles in')
     parser.add_argument('--hash', type=str, required=False, default=None, help='Use given hash for this movie')
+    parser.add_argument('--from-enc', type=str, required=False, default=None,
+                        help='Treat downloaded subs as this encoding instead of guessing')
     return parser.parse_args()
 
 
@@ -38,7 +40,8 @@ def _is_7z_on_path(command: str = "7z") -> bool:
     return shutil.which(command) is not None
 
 
-def main(movie_path: str, subtitles_path: Optional[str] = None, use_hash: Optional[str] = None) -> None:
+def main(movie_path: str, subtitles_path: Optional[str] = None, use_hash: Optional[str] = None,
+         from_enc: Optional[str] = None) -> None:
     log = logging.getLogger()
     movie_path = path.abspath(movie_path)
     subtitles_path = path.abspath(subtitles_path or get_target_path_for_subtitle(movie_path))
@@ -48,7 +51,7 @@ def main(movie_path: str, subtitles_path: Optional[str] = None, use_hash: Option
                 napi_client = NapiPy()
                 movie_hash = use_hash or napi_client.calc_hash(movie_path)
                 log.info("Downloading subs for {} (hash: {})".format(path.basename(movie_path), movie_hash))
-                src_enc, tgt_src, tmp_file = napi_client.download_subs(movie_hash)
+                src_enc, tgt_src, tmp_file = napi_client.download_subs(movie_hash, use_enc=from_enc)
                 if src_enc is not None and tmp_file is not None:
                     subs_path = napi_client.move_subs(tmp_file, subtitles_path) \
                         if subtitles_path else napi_client.move_subs_to_movie(tmp_file, movie_path)
@@ -73,7 +76,7 @@ def cli_main():
     log = logging.getLogger()
     try:
         args = _parse_args()
-        main(args.movie_path, subtitles_path=args.target, use_hash=args.hash)
+        main(args.movie_path, subtitles_path=args.target, use_hash=args.hash, from_enc=args.from_enc)
     except Exception as e:
         log.error("Parameters error: {}".format(e))
         exit(EXIT_CODE_WRONG_ARGS)

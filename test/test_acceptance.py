@@ -23,3 +23,16 @@ class NapiPyAcceptanceTest(unittest.TestCase):
         src_enc, tgt_enc, tmp_file = napi.download_subs(movie_hash)
         self.assertIsNone(src_enc)
         self.assertIsNone(tmp_file)
+
+    def test_should_download_subs_with_forced_encoding(self):
+        movie_hash = '0e9b0d0d3dc5abc0538d207d477af4a1'
+        napi = NapiPy()
+        src_enc, tgt_enc, tmp_file = napi.download_subs(movie_hash, use_enc="utf-8")
+        self.assertEqual(src_enc, "utf-8")
+
+        with open(tmp_file) as subs_file:
+            subs = subs_file.read()
+
+        expected_phrases = ['ciąży', 'artykułów', 'Właśnie', 'wyjść', 'wciąż']
+        for expected_phrase in expected_phrases:
+            self.assertIn(expected_phrase, subs)
