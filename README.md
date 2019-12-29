@@ -1,4 +1,4 @@
-# napi-py [![Build Status](https://travis-ci.com/emkor/napi.py.svg?branch=master)](https://travis-ci.com/emkor/napi-py)
+# napi-py [![Build Status](https://travis-ci.com/emkor/napi-py.svg?branch=master)](https://travis-ci.com/emkor/napi-py)
 CLI tool for downloading subtitles from napiprojekt.pl, fork of [gabrys/napi.py](https://github.com/gabrys/napi.py)
 
 ## prerequisites
