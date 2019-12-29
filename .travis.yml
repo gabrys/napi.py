@@ -10,11 +10,11 @@ before_script:
 
 script:
   - tox -e lint
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then tox -e py36; else tox -e py37; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then tox -e py37; else tox -e py36; fi
   - make build
 
 after_success:
-  - ./ci_publish.sh
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then ./ci_publish.sh ; fi
 
 notifications:
   email:
