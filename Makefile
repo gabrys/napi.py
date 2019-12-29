@@ -2,8 +2,8 @@ config: venv-clean venv install
 all: test build
 
 PY3 = python3
-VENV = .venv/napi.py
-VENV_PY3 = .venv/napi.py/bin/python3
+VENV = .venv/$(basename $PWD)
+VENV_PY3 = .venv/$(basename $PWD)/bin/python3
 
 venv-clean:
 	@echo "---- Doing cleanup ----"
@@ -21,8 +21,7 @@ install:
 
 test:
 	@echo "---- Testing ---- "
-	@$(VENV_PY3) -m mypy --ignore-missing-imports ./napi
-	@$(VENV_PY3) -m pytest -v ./test
+	@$(VENV_PY3) -m tox
 
 build:
 	@echo "---- Building package ---- "

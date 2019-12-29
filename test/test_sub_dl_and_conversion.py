@@ -11,7 +11,7 @@ TEST_SUBS_7Z = 'test/resources/DunkirkSubtitles.7zip'
 
 def _get_project_dir(file_: str) -> str:
     curr_dir = os.path.dirname(os.path.realpath(file_))
-    code_directory, proj_dir, _ = curr_dir.partition("napi.py")
+    code_directory, proj_dir, _ = curr_dir.partition("napi-py")
     return path.join(code_directory, proj_dir)
 
 

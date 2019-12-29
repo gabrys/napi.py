@@ -1,8 +1,8 @@
-# napi.py [![Build Status](https://travis-ci.com/emkor/napi.py.svg?branch=master)](https://travis-ci.com/emkor/napi.py)
+# napi-py [![Build Status](https://travis-ci.com/emkor/napi.py.svg?branch=master)](https://travis-ci.com/emkor/napi-py)
 CLI tool for downloading subtitles from napiprojekt.pl, fork of [gabrys/napi.py](https://github.com/gabrys/napi.py)
 
 ## prerequisites
-- Python 3.6 or 3.7
+- Python 3.6 or later
 - `7z` available on PATH
 
 ## installation
@@ -24,7 +24,15 @@ subs_path = napi.move_subs_to_movie(tmp_file, movie_path)
 print(subs_path)
 ```
 
+## in case of issues
+- if there's issue with weird characters in downloaded subtitles, try to re-download and use flag `--from-enc utf-8`
+- if there's no subtitles for your movie, there's still hope:
+    - open the movie web page on `napiprojekt.pl` in your browser, as in example: `https://www.napiprojekt.pl/napisy1,1,1-dla-55534-Z%C5%82odziejaszki-(2018)`
+    - choose subtitles that might match your movie, right-click them and select "Copy link", which looks like this `napiprojekt:96edd6537d9852a51cbdd5b64fee9194`
+    - use flag `--hash 96edd6537d9852a51cbdd5b64fee9194` in this tool
+
+
 ## development
-- `make config` installs `venv` under `.venv/napi.py`
-- `make build` creates installable packages
-- `make test` runs unit and acceptance tests
+- `make config` installs `venv` under `.venv/napi-py`
+- `make test` runs tests
+- `make build` creates installable package

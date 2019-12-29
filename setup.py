@@ -5,9 +5,8 @@ REQUIREMENTS = [
 ]
 
 REQUIREMENTS_DEV = [
-    "mypy>=0.660,<1.0.0",
-    "pytest>=4.1.1,<5.0.0",
-    "wheel>=0.32.3,<1.0.0"
+    "tox==3.*",
+    "wheel==0.*"
 ]
 
 with open("README.md", "r") as fh:
@@ -15,13 +14,13 @@ with open("README.md", "r") as fh:
 
 setup(
     name="napi-py",
-    version="0.1.5",
+    version="0.1.6",
     description="CLI tool for downloading subtitles from napiprojekt.pl",
     author="Mateusz Korzeniowski",
     author_email="emkor93@gmail.com",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/emkor/napi.py",
+    url="https://github.com/emkor/napi-py",
     packages=find_packages(exclude=("test", "test.*")),
     install_requires=REQUIREMENTS,
     tests_require=REQUIREMENTS_DEV,
