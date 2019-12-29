@@ -28,9 +28,8 @@ print(subs_path)
 - if there's issue with weird characters in downloaded subtitles, try to re-download and use flag `--from-enc utf-8`
 - if there's no subtitles for your movie, there's still hope:
     - open the movie web page on `napiprojekt.pl` in your browser, as in example: `https://www.napiprojekt.pl/napisy1,1,1-dla-55534-Z%C5%82odziejaszki-(2018)`
-    - choose subtitles that might match your movie, right-click them and select "Copy link", which looks like this `napiprojekt:96edd6537d9852a51cbdd5b64fee9194`
-    - use flag `--hash 96edd6537d9852a51cbdd5b64fee9194` in this tool
-
+    - choose subtitles that might match your movie, right-click them and select "Copy link" on link containing hash, which looks like this `napiprojekt:96edd6537d9852a51cbdd5b64fee9194`
+    - use flag `--hash YOURHASH` in this tool, i.e. `--hash 96edd6537d9852a51cbdd5b64fee9194`
 
 ## development
 - `make config` installs `venv` under `.venv/napi-py`
