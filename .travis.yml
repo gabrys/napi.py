@@ -9,7 +9,8 @@ before_script:
   - make config
 
 script:
-  - make test
+  - tox -e lint
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then tox -e py36; else tox -e py37; fi
   - make build
 
 after_success:
