@@ -3,7 +3,7 @@ import os
 
 def get_target_path_for_subtitle(movie_path: str) -> str:
     filename, extension = os.path.splitext(movie_path)
-    return filename + ".txt"
+    return filename + ".srt"
 
 
 def store_subtitles(subtitles_path: str, binary_subs: bytes) -> str:

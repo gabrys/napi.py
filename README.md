@@ -2,14 +2,16 @@
 CLI tool for downloading subtitles from napiprojekt.pl, fork of [gabrys/napi.py](https://github.com/gabrys/napi.py)
 
 ## prerequisites
-- Python 3.6 or later
-- `7z` executable available on PATH, can be installed on Debian-based distros with `sudo apt-get install p7zip-full`
+- Python 3.6 or newer
+- `7z` executable available on PATH, can be installed:
+    - on Debian-based distros with `sudo apt-get install p7zip-full`
+    - on macOS with `brew install p7zip` using [homebrew](https://brew.sh/)
 
 ## installation
 - `pip install napi-py` for system wide installation
 
 ## usage as tool
-- `napi-py ~/Downloads/MyMovie.mp4`
+- `napi-py ~/Downloads/MyMovie.mp4` will download and save subtitles under `~/Downloads/MyMovie.srt`
 
 ## usage as lib
 ```python
