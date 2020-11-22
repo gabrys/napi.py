@@ -47,6 +47,8 @@ def main(movie_path: str, subtitles_path: Optional[str] = None, use_hash: Option
     subtitles_path = path.abspath(subtitles_path or get_target_path_for_subtitle(movie_path))
     if path.exists(movie_path):
         if _is_7z_on_path():
+            if use_hash and use_hash.startswith('napiprojekt:'):
+                use_hash = use_hash.partition('napiprojekt:')[-1]
             try:
                 napi_client = NapiPy()
                 movie_hash = use_hash or napi_client.calc_hash(movie_path)
