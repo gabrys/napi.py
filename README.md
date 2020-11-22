@@ -3,10 +3,10 @@ CLI tool for downloading subtitles from napiprojekt.pl, fork of [gabrys/napi.py]
 
 ## prerequisites
 - Python 3.6 or later
-- `7z` available on PATH
+- `7z` executable available on PATH, can be installed on Debian-based distros with `sudo apt-get install p7zip-full`
 
 ## installation
-- `sudo pip install napi-py` for system wide installation
+- `pip install napi-py` for system wide installation
 
 ## usage as tool
 - `napi-py ~/Downloads/MyMovie.mp4`
