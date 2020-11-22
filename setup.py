@@ -6,7 +6,8 @@ REQUIREMENTS = [
 
 REQUIREMENTS_DEV = [
     "tox==3.*",
-    "wheel==0.*"
+    "wheel==0.*",
+    "twine"
 ]
 
 with open("README.md", "r") as fh:

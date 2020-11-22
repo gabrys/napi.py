@@ -3,7 +3,6 @@
 set -e
 
 if [ "$TRAVIS_BRANCH" == "master" ]; then
-    pip install --upgrade twine
     echo "Uploading as user: $PYPI_USER"
     twine upload -u $PYPI_USER -p $PYPI_PASSWORD dist/*
   else
