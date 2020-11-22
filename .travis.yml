@@ -1,8 +1,8 @@
 language: python
 cache: pip
 python:
-  - "3.6"
   - "3.7"
+  - "3.8"
 
 before_script:
   - sudo apt-get install -y p7zip-full
@@ -10,11 +10,11 @@ before_script:
 
 script:
   - tox -e lint
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then tox -e py37; else tox -e py36; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.8 ]]; then tox -e py38; else tox -e py37; fi
   - make build
 
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then ./ci_publish.sh ; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.8 ]]; then ./ci_publish.sh ; fi
 
 notifications:
   email:
