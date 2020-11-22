@@ -8,9 +8,9 @@ CLI tool for downloading subtitles from napiprojekt.pl, fork of [gabrys/napi.py]
     - on macOS with `brew install p7zip` using [homebrew](https://brew.sh/)
 
 ## installation
-- `pip install napi-py` for system wide installation
+- `pip install napi-py` for user-wide installation
 
-## usage as tool
+## usage as CLI tool
 - `napi-py ~/Downloads/MyMovie.mp4` will download and save subtitles under `~/Downloads/MyMovie.srt`
 
 ## usage as lib
