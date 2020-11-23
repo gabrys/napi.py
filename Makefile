@@ -8,7 +8,7 @@ VENV_PY3 = .venv/$(shell basename $$PWD)/bin/python3
 
 clean:
 	@echo "---- Doing cleanup ----"
-	@rm -rf .venv .tox .mypy_cache *.egg-info build dist
+	@rm -rf .venv .mypy_cache *.egg-info build dist
 	@mkdir -p .venv
 
 setup:
@@ -37,8 +37,4 @@ build:
 	@echo "---- Building package ---- "
 	@$(VENV_PY3) setup.py sdist bdist_wheel --python-tag py3 --dist-dir ./dist
 
-publish:
-	@echo "---- Publishing package ---- "
-	@$(VENV_PY3) -m twine upload -u $PYPI_USER -p $PYPI_PASSWORD dist/*
-
-.PHONY: all config test build
+.PHONY: all config test build clean setup install lint ut at
