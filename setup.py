@@ -16,7 +16,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="napi-py",
-    version="1.1.0rc0",
+    version="1.1.0",
     description="CLI tool for downloading subtitles from napiprojekt.pl",
     author="Mateusz Korzeniowski",
     author_email="emkor93@gmail.com",
