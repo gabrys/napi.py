@@ -5,9 +5,10 @@ REQUIREMENTS = [
 ]
 
 REQUIREMENTS_DEV = [
-    "tox==3.*",
-    "wheel==0.*",
-    "twine"
+    "mypy==0.*",
+    "pytest==6.*",
+    "twine",
+    "wheel==0.*"
 ]
 
 with open("README.md", "r") as fh:
