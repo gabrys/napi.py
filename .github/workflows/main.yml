@@ -1,0 +1,50 @@
+name: CI
+
+on: push
+
+jobs:
+
+  test:
+    name: Test with Python ${{ matrix.python-version }}
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: [ 3.6, 3.7, 3.8 ]
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up virtualenv, install from source
+        run: make config
+      - name: Run unit tests and static analysis
+        run: make lint ut
+      - name: Build distributable package
+        run: make build
+      - name: Install the package globally
+        run: for pkg in $(find dist/napi-py*.tar.gz); do pip3 install $pkg; done
+      - name: Run acceptance tests
+        run: make at
+
+  release:
+    name: Publish the package
+    needs: test
+    if: ${{ github.ref == 'master' }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up virtualenv, install from source
+        run: make config
+      - name: Build distributable package
+        run: make build
+      - name: List files
+        run: find . -type f | grep -v .venv | sort
+      - name: Release package
+        run: twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
