@@ -1,3 +1,4 @@
+import os
 import shutil
 import tempfile
 from typing import Tuple, Optional
@@ -28,9 +29,11 @@ class NapiPy:
 
     def move_subs_to_movie(self, tmp_subs: str, movie: str) -> str:
         tgt_path = get_target_path_for_subtitle(movie)
-        shutil.move(tmp_subs, tgt_path)
+        shutil.copy(tmp_subs, tgt_path)
+        os.remove(tmp_subs)
         return tgt_path
 
     def move_subs(self, tmp_subs: str, path: str) -> str:
-        shutil.move(tmp_subs, path)
+        shutil.copy(tmp_subs, path)
+        os.remove(tmp_subs)
         return path
