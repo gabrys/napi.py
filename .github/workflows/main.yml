@@ -47,4 +47,6 @@ jobs:
       - name: List files
         run: find . -type f | grep -v .venv | sort
       - name: Release package
-        run: twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
+        run: |
+          pip3 install twine
+          twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} dist/*

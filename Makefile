@@ -15,7 +15,7 @@ setup:
 	@echo "---- Setting up virtualenv ----"
 	@$(PY3) -m venv $(VENV)
 	@echo "---- Installing dependencies and app itself in editable mode ----"
-	@$(VENV_PY3) -m pip install --upgrade pip
+	@$(VENV_PY3) -m pip install --upgrade pip wheel setuptools
 
 install:
 	@echo "---- Installing napi-py ---- "

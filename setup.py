@@ -2,15 +2,13 @@ from distutils.core import setup
 from setuptools import find_packages
 
 REQUIREMENTS = [
-    "pylzma==0.*"
+    "pylzma==0.*",
 ]
 
 REQUIREMENTS_DEV = [
     "mypy==0.*",
     "pylzma==0.*",
     "pytest==6.*",
-    "twine",
-    "wheel==0.*"
 ]
 
 with open("README.md", "r") as fh:
