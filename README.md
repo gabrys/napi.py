@@ -3,6 +3,8 @@ CLI tool for downloading subtitles from napiprojekt.pl, fork of [gabrys/napi.py]
 
 ## prerequisites
 - Python 3.6 or newer
+- on Linux, `python3-dev` package:
+  - for Debian-based systems, use `sudo apt-get install python3-dev`
 
 ## installation
 - `pip install napi-py` for user-wide installation
@@ -24,8 +26,7 @@ print(subs_path)
 ```
 
 ## in case of issues
-- if there's issue with weird characters in downloaded subtitles, try to re-download and use flag `--from-enc utf-8`
-- if there's no subtitles for your movie, there's still hope:
+- if there are no subs for your movie, there's still hope:
     - open the movie web page on `napiprojekt.pl` in your browser, as in example: `https://www.napiprojekt.pl/napisy1,1,1-dla-55534-Z%C5%82odziejaszki-(2018)`
     - choose subtitles that might match your movie, right-click them and select "Copy link" on link containing hash, which looks like this `napiprojekt:96edd6537d9852a51cbdd5b64fee9194`
     - use flag `--hash YOURHASH` in this tool, i.e. `--hash 96edd6537d9852a51cbdd5b64fee9194` or `--hash napiprojekt:96edd6537d9852a51cbdd5b64fee9194`

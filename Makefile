@@ -18,23 +18,23 @@ setup:
 	@$(VENV_PY3) -m pip install --upgrade pip wheel setuptools
 
 install:
-	@echo "---- Installing napi-py ---- "
+	@echo "---- Installing napi-py in virtualenv ---- "
 	@$(VENV_PY3) -m pip install -e .[dev]
 
 lint:
 	@echo "---- Running linter ---- "
-	@$(VENV_PY3) -m mypy -v --ignore-missing-imports napi
+	@$(VENV_PY3) -m mypy --ignore-missing-imports napi
 
 ut:
 	@echo "---- Running unit tests ---- "
-	@$(VENV_PY3) -m pytest -ra -v test/unit
+	@$(VENV_PY3) -m pytest -ra -v -s test/unit
 
 at:
-	@echo "---- Running acceptance tests ---- "
+	@echo "---- Running acceptance tests (requires napi-py on global PATH) ---- "
 	@$(VENV_PY3) -m pytest -ra -v test/acceptance
 
 build:
-	@echo "---- Building package ---- "
+	@echo "---- Building distributable package ---- "
 	@$(VENV_PY3) setup.py sdist bdist_wheel --python-tag py3 --dist-dir ./dist
 
 .PHONY: all config test build clean setup install lint ut at
