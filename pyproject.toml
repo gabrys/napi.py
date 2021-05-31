@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "napi-py"
+version = "0.1.5"
+description = "CLI tool for downloading subtitles from napiprojekt.pl"
+authors = ["emkor93 <emkor93@gmail.com>"]
+license = "GPL-3.0 License"
+readme = "README.md"
+homepage = "https://github.com/emkor/napi-py"
+repository = "https://github.com/emkor/napi-py"
+keywords = ["napiprojekt", "subs", "subtitles", "movie", "film"]
+packages = [
+    { include = "napi" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+pylzma = "^0.5.0"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.812"
+pytest = "^6.2.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

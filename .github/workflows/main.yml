@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [ 3.6, 3.7, 3.8 ]
+        python-version: [ 3.6, 3.7, 3.8, 3.9 ]
     steps:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -17,16 +17,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Set up virtualenv, install from source
-        run: make config
+      - name: Install poetry
+        run: pip install poetry
+      - name: Set up virtualenv
+        run: make install
       - name: Run unit tests and static analysis
-        run: make lint ut
+        run: make test
       - name: Build distributable package
         run: make build
-      - name: Install the package globally
-        run: for pkg in $(find dist/napi-py*.tar.gz); do pip3 install $pkg; done
-      - name: Run acceptance tests
-        run: make at
 
   release:
     name: Publish the package
@@ -37,16 +35,16 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Set up virtualenv, install from source
-        run: make config
+      - name: Install poetry
+        run: pip install poetry
+      - name: Install from source
+        run: make install
       - name: Build distributable package
         run: make build
       - name: List files
         run: find . -type f | grep -v .venv | sort
-      - name: Release package
-        run: |
-          pip3 install twine
-          twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
+      - name: Publish package to pypi
+        run: poetry publish --username ${{ secrets.PYPI_USER }} --password ${{ secrets.PYPI_PASSWORD }}
