@@ -45,4 +45,4 @@ jobs:
       - name: Build the package
         run: make build
       - name: Publish package to pypi
-        run: twine upload --verbose -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
+        run: twine upload --skip-existing --verbose -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
