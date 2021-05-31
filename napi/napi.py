@@ -17,7 +17,9 @@ class NapiPy:
     def calc_hash(self, movie: str) -> str:
         return calc_movie_hash_as_hex(movie)
 
-    def download_subs(self, movie_hash: str, use_enc: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    def download_subs(
+        self, movie_hash: str, use_enc: Optional[str] = None
+    ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
         subs_bin = un7zip_api_response(download_for(movie_hash))
         if subs_bin:
             src_enc, subs_utf8 = decode_subs(subs_bin, use_enc=use_enc)

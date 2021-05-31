@@ -1,8 +1,8 @@
-# napi-py ![CI](https://github.com/emkor/napi-py/workflows/CI/badge.svg)
+# napi-py ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/napi-py) ![CI](https://github.com/emkor/napi-py/workflows/CI/badge.svg)
 CLI tool for downloading subtitles from napiprojekt.pl, fork of [gabrys/napi.py](https://github.com/gabrys/napi.py)
 
 ## prerequisites
-- Python 3.6 or newer
+- Python 3.6.2 or newer
 - on Linux, `python3-dev` package:
   - for Debian-based systems, use `sudo apt-get install python3-dev`
 
@@ -32,6 +32,6 @@ print(subs_path)
     - use flag `--hash YOURHASH` in this tool, i.e. `--hash 96edd6537d9852a51cbdd5b64fee9194` or `--hash napiprojekt:96edd6537d9852a51cbdd5b64fee9194`
 
 ## development
-- `make config` installs `venv` under `.venv/napi-py`
+- `make install` installs poetry virtualenv
 - `make test` runs tests
 - `make build` creates installable package

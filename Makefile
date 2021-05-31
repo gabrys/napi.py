@@ -14,6 +14,7 @@ install:
 lint:
 	@echo "---- Running type check and linter ---- "
 	@$(POETRY) run mypy napi
+	@$(POETRY) run black napi
 
 unit-test:
 	@echo "---- Running unit tests ---- "
