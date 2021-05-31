@@ -39,12 +39,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install poetry
-        run: pip install poetry
+        run: pip install poetry twine
       - name: Install from source
         run: make install
-      - name: Build distributable package
+      - name: Build the package
         run: make build
-      - name: List files
-        run: find . -type f | grep -v .venv | sort
       - name: Publish package to pypi
-        run: poetry publish --username ${{ secrets.PYPI_USER }} --password ${{ secrets.PYPI_PASSWORD }}
+        run: twine upload -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
