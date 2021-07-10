@@ -1,0 +1,10 @@
+*.iml
+.idea/
+
+.venv/
+.tox/
+.mypy_cache/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
